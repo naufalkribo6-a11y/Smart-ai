@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ultra Smart - tubles93</title>
+    <style>
+        /* --- CSS STYLE --- */
+        :root {
+            --bg: #0d0d0d;
+            --sidebar: #151515;
+            --accent: #6a1b9a;
+            --accent-light: #9c27b0;
+            --text: #e0e0e0;
+            --panel: #1e1e1e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            height: 100vh; 
+            display: flex; 
+            overflow: hidden; 
+        }
+
+        /* Layar Login */
+        #auth-screen {
+            position: fixed; inset: 0; background: var(--bg);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+        }
+        .login-card {
+            background: var(--panel);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #333;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+        }
+        .google-btn {
+            background: white; color: #333; border: none; padding: 12px 25px;
+            border-radius: 8px; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; gap: 10px; margin-top: 25px;
+            transition: 0.3s; width: 100%; justify-content: center;
+        }
+        .google-btn:hover { background: #f1f1f1; transform: translateY(-2px); }
+
+        /* App Utama */
+        #main-app { display: none; flex: 1; width: 100%; height: 100%; }
+
+        aside { 
+            width: 260px; background: var(--sidebar); 
+            border-right: 1px solid #222; padding: 20px; 
+            display: flex; flex-direction: column; 
+        }
+
+        .chat-area { flex: 1; display: flex; flex-direction: column; position: relative; }
+
+        #chat-display { 
+            flex: 1; overflow-y: auto; padding: 40px 15%; 
+            display: flex; flex-direction: column; gap: 30px; 
+        }
+
+        /* Pesan Chat */
+        .row { display: flex; gap: 20px; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .avatar { 
+            width: 38px; height: 38px; border-radius: 6px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; flex-shrink: 0; 
+        }
+        .ai-av { background: var(--accent); color: white; }
+        .user-av { background: #444; color: white; }
+
+        .content { font-size: 16px; line-height: 1.6; color: #ccc; }
+
+        /* Kotak Koding */
+        pre { 
+            background: #000; padding: 15px; border-radius: 10px; 
+            border: 1px solid #333; overflow-x: auto; margin: 15px 0;
+        }
+        code { color: #bb86fc; font-family: 'Consolas', monospace; }
+
+        /* Input Bar */
+        .input-area { padding: 20px 15% 40px 15%; background: linear-gradient(transparent, var(--bg) 40%); }
+        .input-box { 
+            background: var(--panel); border: 1px solid #444; 
+            border-radius: 15px; display: flex; padding: 12px 18px; 
+            align-items: flex-end; gap: 10px;
+        }
+        textarea { 
+            flex: 1; background: transparent; border: none; 
+            color: white; outline: none; resize: none; 
+            font-size: 16px; max-height: 200px; 
+        }
+        #send-btn { 
+            background: var(--accent); border: none; border-radius: 8px; 
+            color: white; padding: 10px 15px; cursor: pointer; font-weight: bold;
+        }
+        #send-btn:hover { background: var(--accent-light); }
+
+        .user-profile { 
+            margin-top: auto; padding: 15px; background: #222; 
+            border-radius: 10px; display: flex; align-items: center; gap: 10px; 
+        }
+        .user-profile img { width: 30px; height: 30px; border-radius: 50%; }
+
+        @media (max-width: 768px) { aside { display: none; } #chat-display { padding: 20px 5%; } .input-area { padding: 10px 5% 20px 5%; } }
+    </style>
+</head>
+<body>
+
+    <div id="auth-screen">
+        <div class="login-card">
+            <h1 style="color: var(--accent); letter-spacing: 2px;">AI SMART HUB</h1>
+            <p style="color: #888; margin-top: 10px; font-size: 14px;">Silakan Login untuk Mengakses Fitur Pintar</p>
+            <button class="google-btn" id="login-btn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="20">
+                Masuk dengan Google
+            </button>
+        </div>
+    </div>
+
+    <div id="main-app">
+        <aside>
+            <h2 style="color: var(--accent); margin-bottom: 25px;">Menu AI</h2>
+            <button onclick="location.reload()" style="width:100%; background:#333; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">+ Chat Baru</button>
+            
+            <div class="user-profile">
+                <img id="u-img" src="">
+                <div style="overflow: hidden;">
+                    <p id="u-name" style="font-size: 13px; font-weight: bold; white-space: nowrap; text-overflow: ellipsis;"></p>
+                    <button id="logout-btn" style="background:none; border:none; color: #ff4444; font-size: 11px; cursor: pointer; padding: 0;">Logout</button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="chat-area">
+            <div id="chat-display">
+                <div class="row ai">
+                    <div class="avatar ai-av">AI</div>
+                    <div class="content">Halo! Saya asisten AI pintar. Anda sudah berhasil masuk dengan Google. Apa yang bisa saya bantu koding atau jelaskan hari ini?</div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-box">
+                    <textarea id="user-input" rows="1" placeholder="Tulis pesan cepat Anda..."></textarea>
+                    <button id="send-btn">Kirim</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getVertexAI, getGenerativeModel } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-vertexai-preview.js";
+
+        // --- MASUKKAN CONFIG FIREBASE ANDA DI SINI ---
+        const firebaseConfig = {
+            apiKey: "SALIN_API_KEY_ANDA",
+            authDomain: "PROJECT_ANDA.firebaseapp.com",
+            projectId: "PROJECT_ANDA",
+            storageBucket: "PROJECT_ANDA.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        const authScreen = document.getElementById('auth-screen');
+        const mainApp = document.getElementById('main-app');
+        const chatDisplay = document.getElementById('chat-display');
+        const userInput = document.getElementById('user-input');
+
+        // Login & Logout
+        document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider).catch(err => alert("Gagal login: Periksa Authorized Domains di Firebase."));
+        document.getElementById('logout-btn').onclick = () => signOut(auth);
+
+        let model;
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                authScreen.style.display = 'none';
+                mainApp.style.display = 'flex';
+                document.getElementById('u-name').innerText = user.displayName;
+                document.getElementById('u-img').src = user.photoURL;
+                
+                const vertexAI = getVertexAI(app);
+                model = getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });
+            } else {
+                authScreen.style.display = 'flex';
+                mainApp.style.display = 'none';
+            }
+        });
+
+        async function startChat() {
+            const prompt = userInput.value.trim();
+            if (!prompt || !model) return;
+
+            addMsg(prompt, 'user');
+            userInput.value = '';
+            userInput.style.height = 'auto';
+
+            const aiContent = addMsg("...", 'ai');
+            let fullText = "";
+
+            try {
+                // STREAMING: Jawaban sangat cepat kata demi kata
+                const result = await model.generateContentStream(prompt);
+                aiContent.innerHTML = "";
+
+                for await (const chunk of result.stream) {
+                    const text = chunk.text();
+                    fullText += text;
+                    
+                    // Render kode dan baris baru
+                    aiContent.innerHTML = fullText
+                        .replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>')
+                        .replace(/\n/g, '<br>');
+                    
+                    chatDisplay.scrollTop = chatDisplay.scrollHeight;
+                }
+            } catch (err) {
+                aiContent.innerHTML = "Error: Pastikan 'Vertex AI' sudah diaktifkan di Firebase Console.";
+                console.error(err);
+            }
+        }
+
+        function addMsg(text, role) {
+            const row = document.createElement('div');
+            row.className = `row ${role}`;
+            row.innerHTML = `<div class="avatar ${role}-av">${role === 'ai' ? 'AI' : 'U'}</div><div class="content">${text}</div>`;
+            chatDisplay.appendChild(row);
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+            return row.querySelector('.content');
+        }
+
+        document.getElementById('send-btn').onclick = startChat;
+        userInput.onkeydown = (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); startChat(); } };
+        userInput.oninput = function() { this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; };
+    </script>
+</body>
+</html>
